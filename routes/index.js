@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { TotalModel, TodosModel, TimeLineModel } = require('../db/mongodb')
+const { TotalModel, TodosModel, TimeLineModel, FootPrintModel } = require('../db/mongodb')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -84,6 +84,20 @@ router.post('/del-todos', (req, res) => {
       err ? res.send ({success: false}) : res.send({success: true, todos})
     })
   }
+})
+// 获取足迹
+router.get('/get-foot-print', (req, res) => {
+  FootPrintModel.find((err, footPrints) => {
+    err ? res.send ({success: false}) : res.send({success: true, data: footPrints})
+  })
+})
+// 新增足迹
+router.post('/add-foot-print', (req, res) => {
+  let { position, location, title, url, content, time } = req.body
+  console.log(req.body)
+  new FootPrintModel({ position, location, title, url, content, time }).save((err, data) => {
+    err ? res.send ({success: false}) : res.send({success: true, data: data})
+  })
 })
 
 router.post('/issue', (req, res) => {

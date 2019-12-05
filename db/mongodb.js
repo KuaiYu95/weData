@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://114.55.93.223:27017/myblog', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect('mongodb://127.0.0.1:27017/myblog', {useNewUrlParser: true, useUnifiedTopology: true})
   .catch(err => {
     console.log(err)
   })
@@ -9,6 +9,17 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on("error", (error) => {
   console.log("mongodb数据库连接失败", error)
 });
+
+const footPrintSchema = mongoose.Schema({
+  position: {type: Object, required: true},
+  title: {type: String, required: true},
+  time: {type: String, required: true},
+  location: {type: String, required: true},
+  content: {type: String},
+
+})
+const FootPrintModel = mongoose.model('footPrint', footPrintSchema)
+exports.FootPrintModel = FootPrintModel
 
 const timeLineSchema = mongoose.Schema({
   color: {type: String, required: true},
