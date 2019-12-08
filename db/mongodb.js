@@ -13,13 +13,22 @@ mongoose.connection.on("error", (error) => {
 const footPrintSchema = mongoose.Schema({
   position: {type: Object, required: true},
   title: {type: String, required: true},
-  time: {type: String, required: true},
+  time: {type: String},
   location: {type: String, required: true},
   content: {type: String},
 
 })
 const FootPrintModel = mongoose.model('footPrint', footPrintSchema)
 exports.FootPrintModel = FootPrintModel
+
+const diarySchema = mongoose.Schema({
+  title: {type: String, required: true},
+  time: {type: String, required: true},
+  content: {type: String, required: true},
+
+})
+const DiaryModel = mongoose.model('daily', diarySchema)
+exports.DiaryModel = DiaryModel
 
 const timeLineSchema = mongoose.Schema({
   color: {type: String, required: true},

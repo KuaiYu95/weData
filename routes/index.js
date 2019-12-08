@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { TotalModel, TodosModel, TimeLineModel, FootPrintModel } = require('../db/mongodb')
+const { TotalModel, TodosModel, TimeLineModel, FootPrintModel, DiaryModel } = require('../db/mongodb')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -96,6 +96,25 @@ router.post('/add-foot-print', (req, res) => {
   let { position, location, title, url, content, time } = req.body
   console.log(req.body)
   new FootPrintModel({ position, location, title, url, content, time }).save((err, data) => {
+    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'footCount': 1}}, (err, total) => {
+      console.log({err, total})
+    })
+    err ? res.send ({success: false}) : res.send({success: true, data: data})
+  })
+})
+// 获取日记
+router.get('/get-diary', (req, res) => {
+  DiaryModel.find((err, diarys) => {
+    err ? res.send ({success: false}) : res.send({success: true, data: diarys.reverse()})
+  })
+})
+// 新增日记
+router.post('/add-diary', (req, res) => {
+  let { title, content, time } = req.body
+  new DiaryModel({ title, content, time }).save((err, data) => {
+    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'dailyCount': 1}}, (err, total) => {
+      console.log({err, total})
+    })
     err ? res.send ({success: false}) : res.send({success: true, data: data})
   })
 })
