@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { TotalModel, TodosModel, TimeLineModel, FootPrintModel, DiaryModel } = require('../db/mongodb')
+const { TotalModel, TodosModel, TimeLineModel, FootPrintModel, DiaryModel, UrlModel } = require('../db/mongodb')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -118,6 +118,23 @@ router.post('/add-diary', (req, res) => {
     err ? res.send ({success: false}) : res.send({success: true, data: data})
   })
 })
+// 新增收藏
+router.post('/add-url', (req, res) => {
+  let { classis, title, url, time } = req.body
+  new UrlModel({ classis, title, url, time }).save((err, data) => {
+    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'urlCount': 1}}, (err, total) => {
+      console.log({err, total})
+    })
+    err ? res.send ({success: false}) : res.send({success: true, data: data})
+  })
+})
+// 获取收藏
+router.get('/get-url', (req, res) => {
+  UrlModel.find((err, urls) => {
+    err ? res.send ({success: false}) : res.send({success: true, data: urls})
+  })
+})
+
 
 router.post('/issue', (req, res) => {
   const {title, content, url, date, type} = req.body

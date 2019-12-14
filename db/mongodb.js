@@ -25,10 +25,18 @@ const diarySchema = mongoose.Schema({
   title: {type: String, required: true},
   time: {type: String, required: true},
   content: {type: String, required: true},
-
 })
 const DiaryModel = mongoose.model('daily', diarySchema)
 exports.DiaryModel = DiaryModel
+
+const urlSchema = mongoose.Schema({
+  classis: {type: String, required: true},
+  title: {type: String, required: true},
+  time: {type: String, required: true},
+  url: {type: String, required: true},
+})
+const UrlModel = mongoose.model('url', urlSchema)
+exports.UrlModel = UrlModel
 
 const timeLineSchema = mongoose.Schema({
   color: {type: String, required: true},
@@ -48,7 +56,7 @@ exports.TodosModel = TodosModel
 
 const totalSchema = mongoose.Schema({
   postCount: {type: Number, required: true},
-  articalCount: {type: Number, required: true},
+  urlCount: {type: Number, required: true},
   todoCount: {type: Number, required: true},
   dailyCount: {type: Number, required: true},
   footCount: {type: Number, required: true},
