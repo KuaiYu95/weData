@@ -22,7 +22,7 @@ router.get('/get-timeline', (req, res) => {
 router.post('/add-timeline', (req, res) => {
   const {time, color, content} = req.body
   new TimeLineModel({time, color, content}).save((err, timeline) => {
-    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'featCount': 1}}, (err, total) => {
+    TotalModel.findByIdAndUpdate({_id: '5e4a474991ce5f59a4dfa0a8'}, {$inc:{'featCount': 1}}, (err, total) => {
       console.log({err, total})
     })
     err ? res.send ({success: false}) : res.send({success: true, data: timeline})
@@ -39,7 +39,7 @@ router.post('/add-todos', (req, res) => {
   const {content} = req.body
   const time = new Date().toLocaleDateString()
   new TodosModel({content, isChecked: false, time}).save((err, todo) => {
-    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'todoCount': 1}}, (err, total) => {
+    TotalModel.findByIdAndUpdate({_id: '5e4a474991ce5f59a4dfa0a8'}, {$inc:{'todoCount': 1}}, (err, total) => {
       console.log({err, total})
     })
     err ? res.send ({success: false}) : res.send({success: true, data: todo})
@@ -70,7 +70,7 @@ router.post('/del-todos', (req, res) => {
   const {type} = req.body 
   if (type) {
     TodosModel.deleteMany({}, (err, todos) => {
-      TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$set:{'todoCount': 0}}, (err, total) => {
+      TotalModel.findByIdAndUpdate({_id: '5e4a474991ce5f59a4dfa0a8'}, {$set:{'todoCount': 0}}, (err, total) => {
         console.log({err, total})
       })
       err ? res.send ({success: false}) : res.send({success: true, todos})
@@ -78,7 +78,7 @@ router.post('/del-todos', (req, res) => {
   } else {
     const {_id} = req.body
     TodosModel.deleteOne({_id}, (err, todos) => {
-      TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'todoCount': -1}}, (err, total) => {
+      TotalModel.findByIdAndUpdate({_id: '5e4a474991ce5f59a4dfa0a8'}, {$inc:{'todoCount': -1}}, (err, total) => {
         console.log({err, total})
       })
       err ? res.send ({success: false}) : res.send({success: true, todos})
@@ -96,7 +96,7 @@ router.post('/add-foot-print', (req, res) => {
   let { position, location, title, url, content, time } = req.body
   console.log(req.body)
   new FootPrintModel({ position, location, title, url, content, time }).save((err, data) => {
-    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'footCount': 1}}, (err, total) => {
+    TotalModel.findByIdAndUpdate({_id: '5e4a474991ce5f59a4dfa0a8'}, {$inc:{'footCount': 1}}, (err, total) => {
       console.log({err, total})
     })
     err ? res.send ({success: false}) : res.send({success: true, data: data})
@@ -112,7 +112,7 @@ router.get('/get-diary', (req, res) => {
 router.post('/add-diary', (req, res) => {
   let { title, content, time } = req.body
   new DiaryModel({ title, content, time }).save((err, data) => {
-    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'dailyCount': 1}}, (err, total) => {
+    TotalModel.findByIdAndUpdate({_id: '5e4a474991ce5f59a4dfa0a8'}, {$inc:{'dailyCount': 1}}, (err, total) => {
       console.log({err, total})
     })
     err ? res.send ({success: false}) : res.send({success: true, data: data})
@@ -122,7 +122,7 @@ router.post('/add-diary', (req, res) => {
 router.post('/add-url', (req, res) => {
   let { classis, title, url, time } = req.body
   new UrlModel({ classis, title, url, time }).save((err, data) => {
-    TotalModel.findByIdAndUpdate({_id: '5daa6eb6111c0c675ee30d06'}, {$inc:{'urlCount': 1}}, (err, total) => {
+    TotalModel.findByIdAndUpdate({_id: '5e4a474991ce5f59a4dfa0a8'}, {$inc:{'urlCount': 1}}, (err, total) => {
       console.log({err, total})
     })
     err ? res.send ({success: false}) : res.send({success: true, data: data})
