@@ -10,13 +10,27 @@ mongoose.connection.on("error", (error) => {
   console.log("mongodb数据库连接失败", error)
 });
 
+const blogSchema = mongoose.Schema({
+  title: {type: String, required: true},
+  text: {type: String, required: true},
+  html: {type: String},
+  typeIds: {type: Array, required: true},
+  uploadTime: {type: String, required: true},
+  lastModifyTime: {type: String, required: true},
+  commentCount: {type: Number, required: true},
+  likeCount: {type: Number, required: true},
+  collectCount: {type: Number, required: true},
+  viewCount: {type: Number, required: true},
+})
+const BlogModel = mongoose.model('blog', blogSchema)
+exports.BlogModel = BlogModel
+
 const footPrintSchema = mongoose.Schema({
   position: {type: Object, required: true},
   title: {type: String, required: true},
   time: {type: String},
   location: {type: String, required: true},
   content: {type: String},
-
 })
 const FootPrintModel = mongoose.model('footPrint', footPrintSchema)
 exports.FootPrintModel = FootPrintModel
@@ -55,7 +69,7 @@ const TodosModel = mongoose.model('todo', todosSchema)
 exports.TodosModel = TodosModel
 
 const totalSchema = mongoose.Schema({
-  postCount: {type: Number, required: true},
+  blogCount: {type: Number, required: true},
   urlCount: {type: Number, required: true},
   todoCount: {type: Number, required: true},
   dailyCount: {type: Number, required: true},
