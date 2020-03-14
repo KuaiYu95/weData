@@ -172,7 +172,7 @@ router.get('/get-blog', (req, res) => {
     } else if (searchSort == '4') {
       data = posts.sort((a, b) => b.collectCount - a.collectCount)
     }
-    data = data.slice(currentPage, pageSize)
+    data = data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
     err ? res.send({ success: false }) : res.send({ success: true, data, totalItems })
   })
 })
