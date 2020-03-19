@@ -7,19 +7,19 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 // 首页获取数据
-router.get('/get-total', (req, res) => {
+router.get('/api/get-total', (req, res) => {
   TotalModel.find((err, total) => {
     err ? res.send({ success: false }) : res.send({ success: true, data: total })
   })
 })
 // 获取时间线
-router.get('/get-timeline', (req, res) => {
+router.get('/api/get-timeline', (req, res) => {
   TimeLineModel.find((err, timeline) => {
     err ? res.send({ success: false }) : res.send({ success: true, data: timeline })
   })
 })
 // 添加时间线
-router.post('/add-timeline', (req, res) => {
+router.post('/api/add-timeline', (req, res) => {
   const { time, color, content } = req.body
   new TimeLineModel({ time, color, content }).save((err, timeline) => {
     TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'featCount': 1 } }, (err, total) => {
@@ -29,13 +29,13 @@ router.post('/add-timeline', (req, res) => {
   })
 })
 // 获取 todos
-router.get('/get-todos', (req, res) => {
+router.get('/api/get-todos', (req, res) => {
   TodosModel.find((err, todos) => {
     err ? res.send({ success: false }) : res.send({ success: true, data: todos.reverse() })
   })
 })
 // 添加 todos
-router.post('/add-todos', (req, res) => {
+router.post('/api/add-todos', (req, res) => {
   const { content } = req.body
   const time = new Date().toLocaleDateString()
   new TodosModel({ content, isChecked: false, time }).save((err, todo) => {
@@ -46,7 +46,7 @@ router.post('/add-todos', (req, res) => {
   })
 })
 // 修改 todos
-router.post('/modify-todos', (req, res) => {
+router.post('/api/modify-todos', (req, res) => {
   const { type, check } = req.body
   if (type) {
     TodosModel.find((err, todos) => {
@@ -66,7 +66,7 @@ router.post('/modify-todos', (req, res) => {
   }
 })
 // 删除 todos
-router.post('/del-todos', (req, res) => {
+router.post('/api/del-todos', (req, res) => {
   const { type } = req.body
   if (type) {
     TodosModel.deleteMany({}, (err, todos) => {
@@ -86,13 +86,13 @@ router.post('/del-todos', (req, res) => {
   }
 })
 // 获取足迹
-router.get('/get-foot-print', (req, res) => {
+router.get('/api/get-foot-print', (req, res) => {
   FootPrintModel.find((err, footPrints) => {
     err ? res.send({ success: false }) : res.send({ success: true, data: footPrints })
   })
 })
 // 新增足迹
-router.post('/add-foot-print', (req, res) => {
+router.post('/api/add-foot-print', (req, res) => {
   let { position, location, title, url, content, time } = req.body
   console.log(req.body)
   new FootPrintModel({ position, location, title, url, content, time }).save((err, data) => {
@@ -103,13 +103,13 @@ router.post('/add-foot-print', (req, res) => {
   })
 })
 // 获取日记
-router.get('/get-diary', (req, res) => {
+router.get('/api/get-diary', (req, res) => {
   DiaryModel.find((err, diarys) => {
     err ? res.send({ success: false }) : res.send({ success: true, data: diarys.reverse() })
   })
 })
 // 新增日记
-router.post('/add-diary', (req, res) => {
+router.post('/api/add-diary', (req, res) => {
   let { title, content, time } = req.body
   new DiaryModel({ title, content, time }).save((err, data) => {
     TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'dailyCount': 1 } }, (err, total) => {
@@ -119,7 +119,7 @@ router.post('/add-diary', (req, res) => {
   })
 })
 // 新增收藏
-router.post('/add-url', (req, res) => {
+router.post('/api/add-url', (req, res) => {
   let { classis, title, url, time } = req.body
   new UrlModel({ classis, title, url, time }).save((err, data) => {
     TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'urlCount': 1 } }, (err, total) => {
@@ -129,13 +129,13 @@ router.post('/add-url', (req, res) => {
   })
 })
 // 获取收藏
-router.get('/get-url', (req, res) => {
+router.get('/api/get-url', (req, res) => {
   UrlModel.find((err, urls) => {
     err ? res.send({ success: false }) : res.send({ success: true, data: urls })
   })
 })
 // 新增blog
-router.post('/add-blog', (req, res) => {
+router.post('/api/add-blog', (req, res) => {
   new BlogModel(req.body).save((err, data) => {
     TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'blogCount': 1 } }, (err, total) => {
       console.log({ err, total })
@@ -153,11 +153,12 @@ router.post('/add-blog', (req, res) => {
  * 3 - 最多查看
  * 4 - 最多收藏
  */
-router.get('/get-blog', (req, res) => {
+router.get('/api/get-blog', (req, res) => {
   let { currentPage, pageSize, searchSort, searchValue, searchType } = req.query
   currentPage -= 1
   BlogModel.find((err, blogs) => {
     let totalItems = blogs.length
+    let data = []
     let posts = blogs.reverse()
       .filter(it => it.title.includes(searchValue))
       .filter(it => searchType != '' ? it.typeIds.includes(searchType) : true)
@@ -177,7 +178,7 @@ router.get('/get-blog', (req, res) => {
   })
 })
 // 获取博客详情
-router.get('/get-blog-detail', (req, res) => {
+router.get('/api/get-blog-detail', (req, res) => {
   const { _id } = req.query
   BlogModel.find({ _id }, (err, post) => {
     console.log(err, post)
