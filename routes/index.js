@@ -137,11 +137,15 @@ router.get('/api/get-url', (req, res) => {
 // 新增blog
 router.post('/api/add-blog', (req, res) => {
   new BlogModel(req.body).save((err, data) => {
-    TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'blogCount': 1 } }, (err, total) => {
-      console.log({ err, total })
-    })
-    console.log(err)
+    TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'blogCount': 1 } }, () => {})
     err ? res.send({ success: false }) : res.send({ success: true, data: data })
+  })
+})
+// 编辑更新博客
+router.post('/api/update-blog', (req, res) => {
+  const { _id } = req.body
+  BlogModel.findByIdAndUpdate({ _id }, req.body, (err, post) => {
+    res.send(post)
   })
 })
 // 获取链接
@@ -154,7 +158,7 @@ router.post('/api/add-blog', (req, res) => {
  * 4 - 最多收藏
  */
 router.get('/api/get-blog', (req, res) => {
-  let { currentPage, pageSize, searchSort, searchValue, searchType } = req.query
+  let { currentPage, pageSize, searchSort, searchValue, searchType, type } = req.query
   currentPage -= 1
   BlogModel.find((err, blogs) => {
     let totalItems = blogs.length
@@ -173,6 +177,16 @@ router.get('/api/get-blog', (req, res) => {
     } else if (searchSort == '4') {
       data = posts.sort((a, b) => b.collectCount - a.collectCount)
     }
+    if (type) {
+      data = data.filter(it => {
+        for (let i = 0; i < type.length; i++) {
+          if (it.typeIds.includes(type[i])) {
+            return true
+          }
+        }
+        return false
+      })
+    }
     data = data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
     err ? res.send({ success: false }) : res.send({ success: true, data, totalItems })
   })
@@ -181,8 +195,28 @@ router.get('/api/get-blog', (req, res) => {
 router.get('/api/get-blog-detail', (req, res) => {
   const { _id } = req.query
   BlogModel.find({ _id }, (err, post) => {
-    console.log(err, post)
     err ? res.send({ success: false }) : res.send({ success: true, data: post[0] })
+  })
+})
+// 删除博客
+router.get('/api/del-blog', (req, res) => {
+  const { _id } = req.query
+  BlogModel.findOneAndDelete({ _id }, (err, post) => {
+    res.send(post)
+  })
+})
+// 查看博客viewCount加1
+router.get('/api/add-blog-viewCount', (req, res) => {
+  const { _id } = req.query
+  BlogModel.findByIdAndUpdate({ _id }, { $inc: { 'viewCount': 1 } }, (err, post) => {
+    res.send(post)
+  })
+})
+// 点赞博客likeCount加1
+router.get('/api/add-blog-likeCount', (req, res) => {
+  const { _id } = req.query
+  BlogModel.findByIdAndUpdate({ _id }, { $inc: { 'likeCount': 1 } }, (err, post) => {
+    res.send(post)
   })
 })
 
