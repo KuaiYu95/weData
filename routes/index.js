@@ -209,14 +209,14 @@ router.get('/api/del-blog', (req, res) => {
 router.get('/api/add-blog-viewCount', (req, res) => {
   const { _id } = req.query
   BlogModel.findByIdAndUpdate({ _id }, { $inc: { 'viewCount': 1 } }, (err, post) => {
-    res.send(post)
+    res.send({...post, viewCount: post.viewCount + 1})
   })
 })
 // 点赞博客likeCount加1
 router.get('/api/add-blog-likeCount', (req, res) => {
   const { _id } = req.query
   BlogModel.findByIdAndUpdate({ _id }, { $inc: { 'likeCount': 1 } }, (err, post) => {
-    res.send(post)
+    res.send({...post, viewCount: post.likeCount + 1})
   })
 })
 
