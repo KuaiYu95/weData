@@ -86,16 +86,15 @@ router.post('/api/del-todos', (req, res) => {
   }
 })
 // 获取足迹
-router.get('/api/get-foot-print', (req, res) => {
+router.get('/api/get-atlas', (req, res) => {
   FootPrintModel.find((err, footPrints) => {
     err ? res.send({ success: false }) : res.send({ success: true, data: footPrints })
   })
 })
 // 新增足迹
-router.post('/api/add-foot-print', (req, res) => {
-  let { position, location, title, url, content, time } = req.body
-  console.log(req.body)
-  new FootPrintModel({ position, location, title, url, content, time }).save((err, data) => {
+router.post('/api/add-atlas', (req, res) => {
+  let { position, location, title, content, time } = req.body
+  new FootPrintModel({ position, location, title, content, time }).save((err, data) => {
     TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'footCount': 1 } }, (err, total) => {
       console.log({ err, total })
     })
