@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
-mongoose.connect('mongodb://localhost:27017/myblog', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect('mongodb://114.55.93.223:27017/myblog', {useNewUrlParser: true, useUnifiedTopology: true})
   .catch(err => {
     console.log(err)
   })
