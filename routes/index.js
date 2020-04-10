@@ -227,7 +227,6 @@ router.post('/issue', (req, res) => {
   })
 })
 
-
 router.get('/postsList:keys', (req, res) => {
   const { keys } = req.params
   const id = keys.substring(keys.length - 1)
