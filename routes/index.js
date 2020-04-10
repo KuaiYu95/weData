@@ -166,7 +166,7 @@ router.get('/api/get-blog', (req, res) => {
       .filter(it => it.title.includes(searchValue))
       .filter(it => searchType != '' ? it.typeIds.includes(searchType) : true)
     if (searchSort == '0') {
-      data = posts
+      data = posts.sort((a, b) => b.lastModifyTime - a.lastModifyTime)
     } else if (searchSort == '1') {
       data = posts.sort((a, b) => b.commentCount - a.commentCount)
     } else if (searchSort == '2') {
@@ -219,13 +219,13 @@ router.get('/api/add-blog-likeCount', (req, res) => {
   })
 })
 
-
 router.post('/issue', (req, res) => {
   const { title, content, url, date, type } = req.body
   new PostModel({ title, content, url, date, type, likeCount: 0, commentCount: 0, viewCount: 0 }).save((err, post) => {
     res.send()
   })
 })
+
 
 router.get('/postsList:keys', (req, res) => {
   const { keys } = req.params
@@ -272,6 +272,8 @@ router.get('/postView:id', (req, res) => {
     res.send(post)
   })
 })
+
+
 
 router.get('/commentsList:id', (req, res) => {
   const { id } = req.params
