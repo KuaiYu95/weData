@@ -273,8 +273,6 @@ router.get('/postView:id', (req, res) => {
   })
 })
 
-
-
 router.get('/commentsList:id', (req, res) => {
   const { id } = req.params
   const _id = id.substring(1)
