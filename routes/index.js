@@ -294,11 +294,4 @@ router.post('/comment', (req, res) => {
   })
 })
 
-router.post('/like', (req, res) => {
-  const { _id } = req.body
-  PostModel.findByIdAndUpdate({ _id }, { $inc: { 'likeCount': 1 } }, (err, post) => {
-    res.send()
-  })
-})
-
 module.exports = router;
