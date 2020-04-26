@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
-mongoose.connect('mongodb://114.55.93.223:27017/myblog', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect('mongodb://127.0.0.1/myblog', {useNewUrlParser: true, useUnifiedTopology: true})
   .catch(err => {
     console.log(err)
   })
@@ -22,6 +22,7 @@ const blogSchema = mongoose.Schema({
   likeCount: {type: Number, required: true},
   collectCount: {type: Number, required: true},
   viewCount: {type: Number, required: true},
+  downLoadCount: {type: Number, required: true}
 })
 const BlogModel = mongoose.model('blog', blogSchema)
 exports.BlogModel = BlogModel
