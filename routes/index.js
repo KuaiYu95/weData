@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { TotalModel, TodosModel, TimeLineModel, FootPrintModel, DiaryModel, UrlModel, BlogModel } = require('../db/mongodb')
+const { TotalModel, TodosModel, TimeLineModel, FootPrintModel, DiaryModel, UrlModel, BlogModel, CommentsModel } = require('../db/mongodb')
 const id = '5e5b207af5bbf627da7ae4a2'
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -137,7 +137,7 @@ router.get('/api/get-url', (req, res) => {
 router.post('/api/add-blog', (req, res) => {
   new BlogModel(req.body).save((err, data) => {
     TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'blogCount': 1 } }, () => {})
-    err ? res.send({ success: false }) : res.send({ success: true, data: data })
+    err ? res.send({ success: false, err }) : res.send({ success: true, data: data })
   })
 })
 // 编辑更新博客
@@ -154,7 +154,7 @@ router.post('/api/update-blog', (req, res) => {
  * 1 - 最多评论
  * 2 - 最多点赞
  * 3 - 最多查看
- * 4 - 最多收藏
+ * 4 - 最多下载
  */
 router.get('/api/get-blog', (req, res) => {
   let { currentPage, pageSize, searchSort, searchValue, searchType, type } = req.query
@@ -174,7 +174,7 @@ router.get('/api/get-blog', (req, res) => {
     } else if (searchSort == '3') {
       data = posts.sort((a, b) => b.viewCount - a.viewCount)
     } else if (searchSort == '4') {
-      data = posts.sort((a, b) => b.collectCount - a.collectCount)
+      data = posts.sort((a, b) => b.downloadCount - a.downloadCount)
     }
     if (type) {
       data = data.filter(it => {
@@ -193,15 +193,16 @@ router.get('/api/get-blog', (req, res) => {
 // 获取博客详情
 router.get('/api/get-blog-detail', (req, res) => {
   const { _id } = req.query
-  BlogModel.find({ _id }, (err, post) => {
-    err ? res.send({ success: false }) : res.send({ success: true, data: post[0] })
+  BlogModel.find({ _id }, (err, blog) => {
+    err ? res.send({ success: false }) : res.send({ success: true, data: blog[0] })
   })
 })
 // 删除博客
 router.get('/api/del-blog', (req, res) => {
   const { _id } = req.query
-  BlogModel.findOneAndDelete({ _id }, (err, post) => {
-    res.send(post)
+  BlogModel.findOneAndDelete({ _id }, (err, blog) => {
+    TotalModel.findByIdAndUpdate({ _id: id }, { $inc: { 'blogCount': -1 } }, () => {})
+    res.send(blog)
   })
 })
 // 查看博客viewCount加1
@@ -211,86 +212,40 @@ router.get('/api/add-blog-viewCount', (req, res) => {
     res.send({...post, viewCount: post.viewCount + 1})
   })
 })
+// 下载博客downloadCount加1
+router.get('/api/download-blog', (req, res) => {
+  const { _id } = req.query
+  BlogModel.findByIdAndUpdate({ _id }, { $inc: { 'downloadCount': 1 } }, (err, blog) => {
+    res.send({...blog, downloadCount: blog.downloadCount + 1})
+  })
+})
 // 点赞博客likeCount加1
 router.get('/api/add-blog-likeCount', (req, res) => {
   const { _id } = req.query
   BlogModel.findByIdAndUpdate({ _id }, { $inc: { 'likeCount': 1 } }, (err, post) => {
-    res.send({...post, viewCount: post.likeCount + 1})
+    res.send({...post, likeCount: post.likeCount + 1})
   })
 })
-
-
-router.post('/issue', (req, res) => {
-  const { title, content, url, date, type } = req.body
-  new PostModel({ title, content, url, date, type, likeCount: 0, commentCount: 0, viewCount: 0 }).save((err, post) => {
-    res.send()
+// 取消点赞likeCount减1
+router.get('/api/dec-blog-likeCount', (req, res) => {
+  const { _id } = req.query
+  BlogModel.findByIdAndUpdate({ _id }, { $inc: { 'likeCount': -1 } }, (err, blog) => {
+    res.send({...blog, likeCount: blog.likeCount + 1})
   })
 })
-
-router.get('/postsList:keys', (req, res) => {
-  const { keys } = req.params
-  const id = keys.substring(keys.length - 1)
-  PostModel.find((err, posts) => {
-    posts = posts.sort((a, b) => b.date - a.date)
-    switch (id) {
-      case '0':
-        res.send(posts)
-        return
-      case '1':
-        posts = posts.filter(post => post.type.includes('前端'))
-        res.send(posts)
-        return
-      case '2':
-        posts = posts.filter(post => post.type.includes('后端'))
-        res.send(posts)
-        return
-      case '3':
-        posts = posts.filter(post => post.type.includes('数据库'))
-        res.send(posts)
-        return
-      case '4':
-        posts = posts.filter(post => post.type.includes('工具'))
-        res.send(posts)
-        return
-      case '5':
-        posts = posts.filter(post => post.type.includes('刷题'))
-        res.send(posts)
-        return
-      case '6':
-        posts = posts.filter(post => post.type.includes('日志'))
-        res.send(posts)
-        return
-    }
+// 新增blog评论
+router.post('/api/add-comment', (req, res) => {
+  const { blogId } = req.body
+  new CommentsModel(req.body).save((err, data) => {
+    BlogModel.findByIdAndUpdate({ _id: blogId }, { $inc: { 'commentCount': 1 } }, () => {})
+    err ? res.send({ success: false }) : res.send({ success: true, data: data })
   })
 })
-
-router.get('/postView:id', (req, res) => {
-  const { id } = req.params
-  const _id = id.substring(1)
-  PostModel.findByIdAndUpdate({ _id }, { $inc: { 'viewCount': 1 } }, (err, post) => {
-    console.log(post)
-    res.send(post)
-  })
-})
-
-router.get('/commentsList:id', (req, res) => {
-  const { id } = req.params
-  const _id = id.substring(1)
-  CommentModel.find((err, comments) => {
-    comments = comments.filter(comment => _id === comment.postId ? true : false)
-      .sort((a, b) => b.datetime - a.datetime)
-    console.log(id, comments)
-    res.send(comments)
-  })
-})
-
-router.post('/comment', (req, res) => {
-  const { postId, content, datetime } = req.body
-  new CommentModel({ postId, content, datetime }).save((err, comment) => {
-    PostModel.findByIdAndUpdate({ _id: postId }, { $inc: { 'commentCount': 1 } }, (err, post) => {
-      console.log({ err, post })
-    })
-    res.send()
+// 获取blog评论
+router.get('/api/get-comment', (req, res) => {
+  const { blogId } = req.query
+  CommentsModel.find((err, comments) => {
+    err ? res.send({ success: false }) : res.send({ success: true, data: comments.filter(it => it.blogId === blogId).reverse() })
   })
 })
 

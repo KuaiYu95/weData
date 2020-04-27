@@ -20,9 +20,8 @@ const blogSchema = mongoose.Schema({
   lastModifyTime: {type: String, required: true},
   commentCount: {type: Number, required: true},
   likeCount: {type: Number, required: true},
-  collectCount: {type: Number, required: true},
   viewCount: {type: Number, required: true},
-  downLoadCount: {type: Number, required: true}
+  downloadCount: {type: Number, required: true}
 })
 const BlogModel = mongoose.model('blog', blogSchema)
 exports.BlogModel = BlogModel
@@ -69,6 +68,15 @@ const todosSchema = mongoose.Schema({
 })
 const TodosModel = mongoose.model('todo', todosSchema)
 exports.TodosModel = TodosModel
+
+const commentsSchema = mongoose.Schema({
+  time: {type: String, required: true},
+  comment: {type: String, required: true},
+  blogId: {type: String, required: true},
+  likeCount: {type: Number, required: true}
+})
+const CommentsModel = mongoose.model('comment', commentsSchema)
+exports.CommentsModel = CommentsModel
 
 const totalSchema = mongoose.Schema({
   blogCount: {type: Number, required: true},
