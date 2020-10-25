@@ -18,14 +18,14 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(lessMiddleware(path.join(__dirname, 'build')));
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(lessMiddleware(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.get('*', function (request, response){
-  response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+  response.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
 })
 
 // catch 404 and forward to error handler
